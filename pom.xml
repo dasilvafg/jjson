@@ -9,9 +9,7 @@
 
 	<name>JJSON</name>
 	<description>
-        This project is a clone of the JSON-java project with a few modifications. The packages
-        are refactored, and the JSONObject class is altered to instantiate a LinkedHashMap
-        instead of a HashMap, to preserve the order of insertion for the attributes.
+        This project is a clone of the JSON-java project with one modification. The JSONObject class is altered to instantiate a LinkedHashMap instead of a HashMap, to preserve the order of insertion for the attributes.
     </description>
 	<url>https://github.com/rumotecnologia/jjson</url>
 
