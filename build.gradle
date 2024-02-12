@@ -29,7 +29,7 @@ subprojects {
     tasks.withType(Javadoc).all { enabled = false }
 }
 
-group = 'br.com.siprov.jjson'
+group = 'io.github.dasilvafg.jjson'
 version = 'v20230618-SNAPSHOT'
 description = 'JSON in Java'
 sourceCompatibility = '1.8'

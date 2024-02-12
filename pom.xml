@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>br.com.siprov</groupId>
+	<groupId>io.github.dasilvafg</groupId>
 	<artifactId>jjson</artifactId>
 	<version>20240205</version>
 	<packaging>bundle</packaging>
@@ -85,7 +85,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>
-							br.com.siprov.jjson
+							io.github.dasilvafg.jjson
 						</Export-Package>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 					</instructions>
@@ -179,9 +179,9 @@
 							<overwriteExistingFiles>true</overwriteExistingFiles>
 							<module>
 								<moduleInfoSource>
-									module br.com.siprov.jjson {
+									module io.github.dasilvafg.jjson {
 									exports
-									br.com.siprov.jjson;
+									io.github.dasilvafg.jjson;
 									}
 								</moduleInfoSource>
 							</module>
