@@ -71,7 +71,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>
-							io.github.dasilvafg.jjson
+							org.json
 						</Export-Package>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 					</instructions>
@@ -164,9 +164,9 @@
 							<overwriteExistingFiles>true</overwriteExistingFiles>
 							<module>
 								<moduleInfoSource>
-									module io.github.dasilvafg.jjson {
+									module org.json {
 									exports
-									io.github.dasilvafg.jjson;
+									org.json;
 									}
 								</moduleInfoSource>
 							</module>
