@@ -3,16 +3,10 @@ package org.json.junit;
 /*
 Public Domain.
 */
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONML;
-import org.json.JSONMLParserConfiguration;
-import org.json.JSONObject;
+import static org.junit.Assert.*;
+
+import org.json.*;
 import org.junit.Test;
 
 /**
@@ -631,7 +625,7 @@ public class JSONMLTest {
                                 "\"subValue\","+
                                 "{\"svAttr\":\"svValue\"},"+
                                 "\"abc\""+
-                            "],"+
+                            "]"+
                         "],"+
                         "[\"value\",3],"+
                         "[\"value\",4.1],"+
@@ -715,7 +709,7 @@ public class JSONMLTest {
     @Test
     public void testToJSONArray_jsonOutput() {
         final String originalXml = "<root><id>01</id><id>1</id><id>00</id><id>0</id><item id=\"01\"/><title>True</title></root>";
-        final String expectedJsonString = "[\"root\",[\"id\",1],[\"id\",1],[\"id\",0],[\"id\",0],[\"item\",{\"id\":1}],[\"title\",true]]";
+        final String expectedJsonString = "[\"root\",[\"id\",\"01\"],[\"id\",1],[\"id\",\"00\"],[\"id\",0],[\"item\",{\"id\":\"01\"}],[\"title\",true]]";
         final JSONArray actualJsonOutput = JSONML.toJSONArray(originalXml, false);
         assertEquals(expectedJsonString, actualJsonOutput.toString());
     }

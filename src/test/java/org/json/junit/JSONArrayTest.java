@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -227,6 +228,19 @@ public class JSONArrayTest {
         Util.checkJSONArrayMaps(jaRaw);
         Util.checkJSONArrayMaps(jaInt);
     }
+    
+    @Test
+    public void jsonArrayByListWithNestedNullValue() {
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Map<String, Object> sub = new HashMap<String, Object>();
+        sub.put("nullKey", null);	
+        list.add(sub);
+        JSONParserConfiguration parserConfiguration = new JSONParserConfiguration().withUseNativeNulls(true);
+        JSONArray jsonArray = new JSONArray(list, parserConfiguration);
+        JSONObject subObject = jsonArray.getJSONObject(0);
+        assertTrue(subObject.has("nullKey"));
+        assertEquals(JSONObject.NULL, subObject.get("nullKey"));
+    }
 
     /**
      * Tests consecutive calls to putAll with array and collection.
@@ -259,6 +273,11 @@ public class JSONArrayTest {
                      jsonArray.length(),
                      len);
 
+	// collection as object
+        @SuppressWarnings("RedundantCast")
+        Object myListAsObject = (Object) myList;
+        jsonArray.putAll(myListAsObject);
+	    
         for (int i = 0; i < myList.size(); i++) {
             assertEquals("collection elements should be equal",
                          myList.get(i),
@@ -472,9 +491,19 @@ public class JSONArrayTest {
     @Test
     public void unquotedText() {
         String str = "[value1, something!, (parens), foo@bar.com, 23, 23+45]";
-        JSONArray jsonArray = new JSONArray(str);
         List<Object> expected = Arrays.asList("value1", "something!", "(parens)", "foo@bar.com", 23, "23+45");
-        assertEquals(expected, jsonArray.toList());
+
+        // Test should fail if default strictMode is true, pass if false
+        JSONParserConfiguration jsonParserConfiguration = new JSONParserConfiguration();
+        if (jsonParserConfiguration.isStrictMode()) {
+            try {
+                JSONArray jsonArray = new JSONArray(str);
+                assertEquals("Expected to throw exception due to invalid string", true, false);
+            } catch (JSONException e) { }
+        } else {
+            JSONArray jsonArray = new JSONArray(str);
+            assertEquals(expected, jsonArray.toList());
+        }
     }
 
     /**
@@ -685,8 +714,8 @@ public class JSONArrayTest {
 
         String jsonArrayStr =
             "["+
-                "hello,"+
-                "world"+
+                "\"hello\","+
+                "\"world\""+
             "]";
         // 2
         jsonArray.put(new JSONArray(jsonArrayStr));
@@ -763,8 +792,8 @@ public class JSONArrayTest {
 
         String jsonArrayStr =
             "["+
-                "hello,"+
-                "world"+
+                "\"hello\","+
+                "\"world\""+
             "]";
         // 2
         jsonArray.put(2, new JSONArray(jsonArrayStr));
@@ -1497,6 +1526,14 @@ public class JSONArrayTest {
     public void testRecursiveDepthArrayFor1001Levels() {
         ArrayList<Object> array = buildNestedArray(1001);
         new JSONArray(array);
+    }
+
+    @Test
+    public void testStrictModeJSONTokener_expectException(){
+        JSONParserConfiguration jsonParserConfiguration = new JSONParserConfiguration().withStrictMode();
+        JSONTokener tokener = new JSONTokener("[\"value\"]invalidCharacters", jsonParserConfiguration);
+
+        assertThrows(JSONException.class, () -> { new JSONArray(tokener); });
     }
 
     public static ArrayList<Object> buildNestedArray(int maxDepth) {

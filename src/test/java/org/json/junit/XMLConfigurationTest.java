@@ -270,9 +270,9 @@ public class XMLConfigurationTest {
 
         String expectedStr = 
             "{\"addresses\":{\"address\":{\"street\":\"[CDATA[Baker street 5]\","+
-            "\"name\":\"Joe Tester\",\"NothingHere\":\"\",TrueValue:true,\n"+
+            "\"name\":\"Joe Tester\",\"NothingHere\":\"\",\"TrueValue\":true,\n"+
             "\"FalseValue\":false,\"NullValue\":null,\"PositiveValue\":42,\n"+
-            "\"NegativeValue\":-23,\"DoubleValue\":-23.45,\"Nan\":-23x.45,\n"+
+            "\"NegativeValue\":-23,\"DoubleValue\":-23.45,\"Nan\":\"-23x.45\",\n"+
             "\"ArrayOfNum\":\"1, 2, 3, 4.1, 5.2\"\n"+
             "},\"xsi:noNamespaceSchemaLocation\":"+
             "\"test.xsd\",\"xmlns:xsi\":\"http://www.w3.org/2001/"+
@@ -574,15 +574,18 @@ public class XMLConfigurationTest {
         XMLParserConfiguration keepStringsAndCloseEmptyTag = keepStrings.withCloseEmptyTag(true);
         XMLParserConfiguration keepDigits = keepStringsAndCloseEmptyTag.withKeepStrings(false);
         XMLParserConfiguration keepDigitsAndNoCloseEmptyTag = keepDigits.withCloseEmptyTag(false);
-        assertTrue(keepStrings.isKeepStrings());
+        assertTrue(keepStrings.isKeepNumberAsString());
+        assertTrue(keepStrings.isKeepBooleanAsString());
         assertFalse(keepStrings.isCloseEmptyTag());
-        assertTrue(keepStringsAndCloseEmptyTag.isKeepStrings());
+        assertTrue(keepStringsAndCloseEmptyTag.isKeepNumberAsString());
+        assertTrue(keepStringsAndCloseEmptyTag.isKeepBooleanAsString());
         assertTrue(keepStringsAndCloseEmptyTag.isCloseEmptyTag());
-        assertFalse(keepDigits.isKeepStrings());
+        assertFalse(keepDigits.isKeepNumberAsString());
+        assertFalse(keepDigits.isKeepBooleanAsString());
         assertTrue(keepDigits.isCloseEmptyTag());
-        assertFalse(keepDigitsAndNoCloseEmptyTag.isKeepStrings());
+        assertFalse(keepDigitsAndNoCloseEmptyTag.isKeepNumberAsString());
+        assertFalse(keepDigitsAndNoCloseEmptyTag.isKeepBooleanAsString());
         assertFalse(keepDigitsAndNoCloseEmptyTag.isCloseEmptyTag());
-
     }
 
     /**
@@ -761,10 +764,71 @@ public class XMLConfigurationTest {
     @Test
     public void testToJSONArray_jsonOutput() {
         final String originalXml = "<root><id>01</id><id>1</id><id>00</id><id>0</id><item id=\"01\"/><title>True</title></root>";
-        final JSONObject expected = new JSONObject("{\"root\":{\"item\":{\"id\":1},\"id\":[1,1,0,0],\"title\":true}}");
+        final JSONObject expected = new JSONObject("{\"root\":{\"item\":{\"id\":\"01\"},\"id\":[\"01\",1,\"00\",0],\"title\":true}}");
         final JSONObject actualJsonOutput = XML.toJSONObject(originalXml, 
                 new XMLParserConfiguration().withKeepStrings(false));
         Util.compareActualVsExpectedJsonObjects(actualJsonOutput,expected);
+    }
+
+    /**
+     * JSON string lost leading zero and converted "True" to true.
+     */
+    @Test
+    public void testToJSONArray_jsonOutput_withKeepNumberAsString() {
+        final String originalXml = "<root><id>01</id><id>1</id><id>00</id><id>0</id><id>null</id><item id=\"01\"/><title>True</title></root>";
+        final JSONObject expected = new JSONObject("{\"root\":{\"item\":{\"id\":\"01\"},\"id\":[\"01\",\"1\",\"00\",\"0\",null],\"title\":true}}");
+        final JSONObject actualJsonOutput = XML.toJSONObject(originalXml,
+                new XMLParserConfiguration().withKeepNumberAsString(true));
+        Util.compareActualVsExpectedJsonObjects(actualJsonOutput,expected);
+    }
+
+    /**
+     * JSON string lost leading zero and converted "True" to true.
+     */
+    @Test
+    public void testToJSONArray_jsonOutput_withKeepBooleanAsString() {
+        final String originalXml = "<root><id>01</id><id>1</id><id>00</id><id>0</id><id>null</id><item id=\"01\"/><title>True</title></root>";
+        final JSONObject expected = new JSONObject("{\"root\":{\"item\":{\"id\":\"01\"},\"id\":[\"01\",1,\"00\",0,null],\"title\":\"True\"}}");
+        final JSONObject actualJsonOutput = XML.toJSONObject(originalXml,
+                new XMLParserConfiguration().withKeepBooleanAsString(true));
+        Util.compareActualVsExpectedJsonObjects(actualJsonOutput,expected);
+    }
+
+    /**
+     * null is "null" when keepStrings == true
+     */
+    @Test
+    public void testToJSONArray_jsonOutput_null_withKeepString() {
+        final String originalXml = "<root><id>01</id><id>1</id><id>00</id><id>0</id><item id=\"01\"/><title>null</title></root>";
+        final JSONObject expected = new JSONObject("{\"root\":{\"item\":{\"id\":\"01\"},\"id\":[\"01\",\"1\",\"00\",\"0\"],\"title\":\"null\"}}");
+        final JSONObject actualJsonOutput = XML.toJSONObject(originalXml,
+                new XMLParserConfiguration().withKeepStrings(true));
+        Util.compareActualVsExpectedJsonObjects(actualJsonOutput,expected);
+    }
+
+    /**
+     * Test keepStrings behavior when setting keepBooleanAsString, keepNumberAsString
+     */
+    @Test
+    public void test_keepStringBehavior() {
+        XMLParserConfiguration xpc = new XMLParserConfiguration().withKeepStrings(true);
+        assertEquals(xpc.isKeepStrings(), true);
+
+        xpc = xpc.withKeepBooleanAsString(true);
+        xpc = xpc.withKeepNumberAsString(false);
+        assertEquals(xpc.isKeepStrings(), false);
+
+        xpc = xpc.withKeepBooleanAsString(false);
+        xpc = xpc.withKeepNumberAsString(true);
+        assertEquals(xpc.isKeepStrings(), false);
+
+        xpc = xpc.withKeepBooleanAsString(true);
+        xpc = xpc.withKeepNumberAsString(true);
+        assertEquals(xpc.isKeepStrings(), true);
+
+        xpc = xpc.withKeepBooleanAsString(false);
+        xpc = xpc.withKeepNumberAsString(false);
+        assertEquals(xpc.isKeepStrings(), false);
     }
 
     /**

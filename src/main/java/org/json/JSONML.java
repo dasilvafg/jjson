@@ -13,6 +13,16 @@ Public Domain.
  * @version 2016-01-30
  */
 public class JSONML {
+
+    /**
+     * Constructs a new JSONML object.
+     * @deprecated (Utility class cannot be instantiated)
+     */
+    @Deprecated
+    public JSONML() {
+    }
+
+
     /**
      * Parse XML values and store them in a JSONArray.
      * @param x       The XMLTokener containing the source string.
@@ -104,7 +114,7 @@ public class JSONML {
                             }
                         } else if (c == '[') {
                             token = x.nextToken();
-                            if (token.equals("CDATA") && x.next() == '[') {
+                            if ("CDATA".equals(token) && x.next() == '[') {
                                 if (ja != null) {
                                     ja.put(x.nextCDATA());
                                 }
@@ -232,9 +242,21 @@ public class JSONML {
                 }
             } else {
                 if (ja != null) {
-                    ja.put(token instanceof String
-                        ? (config.isKeepStrings() ? XML.unescape((String)token) : XML.stringToValue((String)token))
-                        : token);
+                    Object value;
+
+                    if (token instanceof String) {
+                        String strToken = (String) token;
+                        if (config.isKeepStrings()) {
+                            value = XML.unescape(strToken);
+                        } else {
+                            value = XML.stringToValue(strToken);
+                        }
+                    } else {
+                        value = token;
+                    }
+
+                    ja.put(value);
+
                 }
             }
         }

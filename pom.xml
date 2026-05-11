@@ -4,19 +4,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.dasilvafg</groupId>
 	<artifactId>jjson</artifactId>
-	<version>20240205</version>
+	<version>20251224</version>
 	<packaging>bundle</packaging>
 
 	<name>JJSON</name>
 	<description>
-        This project is a clone of the JSON-java project with one modification. The JSONObject class is altered to instantiate a LinkedHashMap instead of a HashMap, to preserve the order of insertion for the attributes.
+        This project is a clone of the JSON-java project with one modification.
+		The JSONObject class is altered to instantiate a LinkedHashMap instead of a HashMap,
+		to preserve the order of insertion for the attributes.
     </description>
-	<url>https://github.com/rumotecnologia/jjson</url>
+	<url>https://github.com/dasilvafg/jjson</url>
 
 	<scm>
-		<url>https://github.com/rumotecnologia/jjson.git</url>
-		<connection>scm:git:git://github.com/rumotecnologia/jjson.git</connection>
-		<developerConnection>scm:git:git@github.com:rumotecnologia/jjson.git</developerConnection>
+		<url>https://github.com/dasilvafg/jjson.git</url>
+		<connection>scm:git:git://github.com/dasilvafg/jjson.git</connection>
+		<developerConnection>scm:git:git@github.com:dasilvafg/jjson.git</developerConnection>
 	</scm>
 
 	<licenses>
@@ -30,7 +32,7 @@
 	<developers>
 		<developer>
 			<name>Fábio Silva</name>
-			<email>fabio@rumotecnologia.com.br</email>
+			<email>fabiogsilva@gmail.com</email>
 		</developer>
 	</developers>
 

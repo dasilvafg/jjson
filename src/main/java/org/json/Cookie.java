@@ -16,6 +16,14 @@ Public Domain.
 public class Cookie {
 
     /**
+     * Constructs a new Cookie object.
+     * @deprecated (Utility class cannot be instantiated)
+     */
+    @Deprecated()
+    public Cookie() {
+    }
+
+    /**
      * Produce a copy of a string in which the characters '+', '%', '=', ';'
      * and control characters are replaced with "%hh". This is a gentle form
      * of URL encoding, attempting to cause as little distortion to the
