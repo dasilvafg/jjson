@@ -5,6 +5,19 @@ and artifactId "json". For example:
 [https://search.maven.org/search?q=g:org.json%20AND%20a:json&core=gav](https://search.maven.org/search?q=g:org.json%20AND%20a:json&core=gav)
 
 ~~~
+20260522    Publish key data, recent commits for minor fixes
+
+20251224    Records, fromJson(), and recent commits
+
+20250517    Strict mode hardening and recent commits
+
+20250107    Restore moditect in pom.xml
+
+20241224    Strict mode opt-in feature, and recent commits. This release does not contain module-info.class.
+It is not recommended if you need this feature.
+
+20240303    Revert optLong/getLong changes, and recent commits.
+
 20240205    Recent commits.
 
 20231013    First release with minimum Java version 1.8. Recent commits, including fixes for CVE-2023-5072.

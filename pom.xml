@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.dasilvafg</groupId>
 	<artifactId>jjson</artifactId>
-	<version>20251224</version>
+	<version>20260522</version>
 	<packaging>bundle</packaging>
 
 	<name>JJSON</name>

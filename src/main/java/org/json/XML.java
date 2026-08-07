@@ -9,6 +9,7 @@ import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * This provides static methods to convert an XML text into a JSONObject, and to
@@ -80,7 +81,7 @@ public class XML {
             public Iterator<Integer> iterator() {
                 return new Iterator<Integer>() {
                     private int nextIndex = 0;
-                    private int length = string.length();
+                    private final int length = string.length();
 
                     @Override
                     public boolean hasNext() {
@@ -89,6 +90,9 @@ public class XML {
 
                     @Override
                     public Integer next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
+                        }
                         int result = string.codePointAt(this.nextIndex);
                         this.nextIndex += Character.charCount(result);
                         return result;
@@ -154,7 +158,7 @@ public class XML {
      * @param cp code point to test
      * @return true if the code point is not valid for an XML
      */
-    private static boolean mustEscape(int cp) {
+    static boolean mustEscape(int cp) {
         /* Valid range from https://www.w3.org/TR/REC-xml/#charsets
          *
          * #x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]
@@ -387,8 +391,13 @@ public class XML {
                             context.append(tagName, JSONObject.NULL);
                         } else if (jsonObject.length() > 0) {
                             context.append(tagName, jsonObject);
-                        } else {
+                        } else if(context.isEmpty()) { //avoids resetting the array in case of an empty tag in the middle or end
                             context.put(tagName, new JSONArray());
+                            if (jsonObject.isEmpty()){
+                                context.append(tagName, "");
+                            }
+                        } else {
+                            context.append(tagName, "");
                         }
                     } else {
                         if (nilAttributeFound) {
@@ -447,7 +456,11 @@ public class XML {
                                 if (config.getForceList().contains(tagName)) {
                                     // Force the value to be an array
                                     if (jsonObject.length() == 0) {
-                                        context.put(tagName, new JSONArray());
+                                        //avoids resetting the array in case of an empty element in the middle or end
+                                        if(context.isEmpty()) {
+                                            context.put(tagName, new JSONArray());
+                                        }
+                                        context.append(tagName, "");
                                     } else if (jsonObject.length() == 1
                                             && jsonObject.opt(config.getcDataTagName()) != null) {
                                         context.append(tagName, jsonObject.opt(config.getcDataTagName()));
