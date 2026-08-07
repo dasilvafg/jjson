@@ -66,6 +66,7 @@ import org.json.junit.data.CustomClassF;
 import org.json.junit.data.CustomClassG;
 import org.json.junit.data.CustomClassH;
 import org.json.junit.data.CustomClassI;
+import org.json.junit.data.CustomClassJ;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Ignore;
@@ -3117,12 +3118,13 @@ public class JSONObjectTest {
         
         // test a more complex object
         writer = new StringWriter();
-        try {
-            new JSONObject()
+
+        JSONObject object = new JSONObject()
                 .put("somethingElse", "a value")
                 .put("someKey", new JSONArray()
-                        .put(new JSONObject().put("key1", new BrokenToString())))
-                .write(writer).toString();
+                        .put(new JSONObject().put("key1", new BrokenToString())));
+        try {
+            object.write(writer).toString();
             fail("Expected an exception, got a String value");
         } catch (JSONException e) {
             assertEquals("Unable to write JSONObject value for key: someKey", e.getMessage());
@@ -3133,17 +3135,18 @@ public class JSONObjectTest {
                 writer.close();
             } catch (Exception e) {}
         }
-       
+
         // test a more slightly complex object
         writer = new StringWriter();
-        try {
-            new JSONObject()
+
+        object = new JSONObject()
                 .put("somethingElse", "a value")
                 .put("someKey", new JSONArray()
                         .put(new JSONObject().put("key1", new BrokenToString()))
                         .put(12345)
-                 )
-                .write(writer).toString();
+                 );
+        try {
+            object.write(writer).toString();
             fail("Expected an exception, got a String value");
         } catch (JSONException e) {
             assertEquals("Unable to write JSONObject value for key: someKey", e.getMessage());
@@ -4229,5 +4232,22 @@ public class JSONObjectTest {
         CustomClassI customClassI = object.fromJson(CustomClassI.class);
         CustomClassI compareClassI = new CustomClassI(dataList);
         assertEquals(customClassI.integerMap.toString(), compareClassI.integerMap.toString());
+    }
+
+    @Test
+    public void jsonObjectParseFromJson_9() {
+        JSONObject object = new JSONObject();
+        object.put("number", 12);
+        object.put("classState", "mutated");
+
+        String initialClassState = CustomClassJ.classState;
+        CustomClassJ.classState = "original";
+        try {
+            CustomClassJ customClassJ = object.fromJson(CustomClassJ.class);
+            assertEquals(12, customClassJ.number);
+            assertEquals("original", CustomClassJ.classState);
+        } finally {
+            CustomClassJ.classState = initialClassState;
+        }
     }
 }
